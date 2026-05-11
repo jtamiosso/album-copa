@@ -34,11 +34,13 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; cursor: pointer; }
+html { height: -webkit-fill-available; }
+body { height: 100%; height: -webkit-fill-available; overflow: hidden; background: var(--bg); color: var(--text); font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif; cursor: default; }
+input, textarea { cursor: text; }
 
 /* ── LAYOUT ── */
-#app { display: flex; flex-direction: column; height: 100%; height: -webkit-fill-available; }
+#app { display: flex; flex-direction: column; height: 100%; height: -webkit-fill-available; position: fixed; top: 0; left: 0; right: 0; bottom: 0; }
 
 /* ── HEADER ── */
 #header {
@@ -75,10 +77,12 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(-
 /* ── SCROLL AREA ── */
 #scroll {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   padding: 12px 14px calc(var(--safe-bottom) + 16px);
   display: flex; flex-direction: column; gap: 10px;
+  min-height: 0;
 }
 
 /* ── SEARCH ROW ── */
@@ -91,7 +95,7 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(-
 
 /* ── GROUP CARD ── */
 .group-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-.group-hdr { display: flex; align-items: center; gap: 8px; padding: 11px 13px; background: var(--bg3); cursor: pointer; user-select: none; }
+.group-hdr { display: flex; align-items: center; gap: 8px; padding: 11px 13px; background: var(--bg3); cursor: pointer; user-select: none; width: 100%; border: none; text-align: left; color: var(--text); }
 .group-hdr-title { font-weight: 800; font-size: 12px; flex: 1; color: var(--blue-light); letter-spacing: .3px; }
 .group-hdr-count { background: var(--blue-dark); color: var(--blue); border-radius: 99px; padding: 2px 9px; font-size: 10px; font-weight: 700; }
 .chevron { font-size: 9px; color: var(--text4); transition: transform .2s; }
@@ -340,11 +344,11 @@ function renderAlbum(container) {
     }, 0);
 
     html += `<div class="group-card">
-      <div class="group-hdr" onclick="toggleGroup('${g}')">
+      <button class="group-hdr" onclick="toggleGroup('${g}')">
         <span class="group-hdr-title">${gl}</span>
         <span class="group-hdr-count">${gHave}/${gTotal}</span>
         <span class="chevron ${isOpen?'open':''}">▼</span>
-      </div>`;
+      </button>`;
 
     if (isOpen) {
       teams.forEach(({name, sfx, flag}) => {
@@ -563,12 +567,8 @@ state = loadState();
 ALBUM.forEach(({g}) => { openGroups[g] = true; });
 render();
 
-// prevent double-tap zoom on iOS
-document.addEventListener('touchend', e => {
-  if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
-    e.preventDefault();
-  }
-}, { passive: false });
+// sem listener de touchend - iOS Safari dispara click normalmente em buttons
+
 </script>
 </body>
 </html>
