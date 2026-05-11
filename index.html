@@ -54,7 +54,7 @@
 .splash-ale {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
-  object-fit: cover; object-position: top center;
+  object-fit: cover; object-position: center 15%;
   opacity: 0.55;
   animation: splashZoom 8s ease-out forwards;
 }
@@ -382,29 +382,7 @@ body {
   letter-spacing: .5px;
 }
 #footer span { color: var(--gold-dk); font-weight: 700; }
-
-/* easter egg Alessandro */
-.ale-wrap {
-  text-align: center;
-  padding: 12px 0 0;
-  cursor: pointer;
-}
-.ale-wrap img {
-  width: 64px; height: 64px;
-  border-radius: 50%;
-  object-fit: cover; object-position: top center;
-  border: 2px solid var(--red);
-  opacity: 0.5;
-  transition: opacity .3s, transform .3s;
-  filter: grayscale(40%);
-}
-.ale-wrap:hover img, .ale-wrap:active img {
-  opacity: 1; transform: scale(1.1); filter: none;
-}
-.ale-label {
-  font-size: 9px; color: var(--grey-dk);
-  margin-top: 4px; letter-spacing: .5px;
-}
+#footer .famiglia { color: var(--grey-dk); font-style: italic; display: block; margin-top: 3px; letter-spacing: 1px; }
 </style>
 </head>
 <body>
@@ -650,7 +628,7 @@ function buildAlbum(){
     h+=`</div>`;
   });
 
-  h+=`<div id="footer">Powered by <span>João Tamiosso</span> · Copa 2026</div><div class="ale-wrap" title="Papai da Alessandro 👀"><img src="papaidalessandro.png" alt="Alessandro"><div class="ale-label">👆 toca aqui</div></div>`;
+  h+=`<div id="footer">Powered by <span>João Tamiosso</span> · Copa 2026<span class="famiglia">Famiglia Tamiosso</span></div>`;
   return h;
 }
 
@@ -674,7 +652,7 @@ function buildMissing(){
     </div>`;
   }));
   if(!any)h+=`<div class="empty">🏆 Álbum completo! Parabéns!</div>`;
-  h+=`<div id="footer">Powered by <span>João Tamiosso</span> · Copa 2026</div><div class="ale-wrap" title="Papai da Alessandro 👀"><img src="papaidalessandro.png" alt="Alessandro"><div class="ale-label">👆 toca aqui</div></div>`;
+  h+=`<div id="footer">Powered by <span>João Tamiosso</span> · Copa 2026<span class="famiglia">Famiglia Tamiosso</span></div>`;
   return h;
 }
 
@@ -700,7 +678,7 @@ function buildExtras(){
     </div>`;
   }));
   if(!any)h+=`<div class="empty">Nenhuma repetida ainda.</div>`;
-  h+=`<div id="footer">Powered by <span>João Tamiosso</span> · Copa 2026</div><div class="ale-wrap" title="Papai da Alessandro 👀"><img src="papaidalessandro.png" alt="Alessandro"><div class="ale-label">👆 toca aqui</div></div>`;
+  h+=`<div id="footer">Powered by <span>João Tamiosso</span> · Copa 2026<span class="famiglia">Famiglia Tamiosso</span></div>`;
   return h;
 }
 
