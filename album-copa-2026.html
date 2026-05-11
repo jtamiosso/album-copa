@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Copa 2026">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0c1220">
+<title>Álbum Copa 2026</title>
+<style>
+:root {
+  --bg: #0c1220;
+  --bg2: #131f2e;
+  --bg3: #0f1d30;
+  --bg4: #1e293b;
+  --border: #1e3a5f;
+  --border2: #334155;
+  --green: #22c55e;
+  --green-dark: #14532d;
+  --green-light: #86efac;
+  --red: #ef4444;
+  --red-dark: #450a0a;
+  --red-light: #fca5a5;
+  --blue: #60a5fa;
+  --blue-dark: #1e3a5f;
+  --blue-light: #93c5fd;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --text4: #475569;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif; }
+
+/* ── LAYOUT ── */
+#app { display: flex; flex-direction: column; height: 100%; height: -webkit-fill-available; }
+
+/* ── HEADER ── */
+#header {
+  flex-shrink: 0;
+  background: linear-gradient(160deg, #0f2a4a 0%, #0c1220 100%);
+  border-bottom: 1.5px solid var(--green);
+  padding: calc(var(--safe-top) + 14px) 16px 0;
+  box-shadow: 0 4px 24px rgba(0,0,0,.5);
+}
+.h-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.logo { font-size: 19px; font-weight: 800; color: var(--green); letter-spacing: -0.5px; }
+.logo-sub { font-size: 10px; color: var(--text3); margin-top: 1px; }
+.btn-reset { background: transparent; border: 1px solid var(--border2); color: var(--text3); border-radius: 8px; padding: 5px 10px; font-size: 11px; cursor: pointer; }
+
+/* progress */
+.prog-wrap { margin-bottom: 9px; }
+.prog-bar { background: var(--bg4); border-radius: 99px; height: 7px; overflow: hidden; margin-bottom: 5px; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, #15803d, #22c55e); border-radius: 99px; transition: width .35s; }
+.prog-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); }
+.prog-n { font-weight: 700; color: var(--green); }
+
+/* pills */
+.pills { display: flex; gap: 7px; margin-bottom: 10px; }
+.pill { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px; }
+.pill-g { background: var(--green-dark); color: var(--green-light); }
+.pill-r { background: var(--red-dark); color: var(--red-light); }
+.pill-b { background: var(--blue-dark); color: var(--blue-light); }
+
+/* tabs */
+.tabs { display: flex; }
+.tab { flex: 1; padding: 9px 2px; background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--text3); font-size: 12px; font-weight: 700; cursor: pointer; }
+.tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+/* ── SCROLL AREA ── */
+#scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 14px calc(var(--safe-bottom) + 16px);
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+/* ── SEARCH ROW ── */
+.search-row { display: flex; flex-direction: column; gap: 7px; }
+.search { background: var(--bg4); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 13px; color: var(--text); font-size: 14px; outline: none; width: 100%; }
+.search:focus { border-color: var(--green); }
+.filter-row { display: flex; gap: 6px; }
+.fbtn { flex: 1; padding: 7px 0; border-radius: 8px; border: 1px solid var(--border2); background: var(--bg4); color: var(--text3); font-size: 11px; font-weight: 700; cursor: pointer; }
+.fbtn.active { background: var(--green); color: #0c1220; border-color: var(--green); }
+
+/* ── GROUP CARD ── */
+.group-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.group-hdr { display: flex; align-items: center; gap: 8px; padding: 11px 13px; background: var(--bg3); cursor: pointer; user-select: none; }
+.group-hdr-title { font-weight: 800; font-size: 12px; flex: 1; color: var(--blue-light); letter-spacing: .3px; }
+.group-hdr-count { background: var(--blue-dark); color: var(--blue); border-radius: 99px; padding: 2px 9px; font-size: 10px; font-weight: 700; }
+.chevron { font-size: 9px; color: var(--text4); transition: transform .2s; }
+.chevron.open { transform: rotate(180deg); }
+
+/* ── TEAM ── */
+.team { border-top: 1px solid #1a2740; padding: 9px 11px 11px; }
+.team-hdr { display: flex; align-items: center; gap: 7px; margin-bottom: 9px; flex-wrap: wrap; }
+.team-name { font-weight: 700; font-size: 13px; flex: 1; min-width: 100px; }
+.team-sfx { background: var(--bg4); color: var(--text2); border-radius: 4px; padding: 2px 6px; font-size: 9px; font-family: monospace; font-weight: 700; }
+.team-cnt { font-size: 11px; color: var(--green); font-weight: 700; }
+.btn-all { background: transparent; border: 1px solid var(--border2); color: var(--text2); border-radius: 6px; padding: 3px 8px; font-size: 10px; cursor: pointer; white-space: nowrap; }
+
+/* ── STICKER GRID ── */
+.sgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 5px; }
+.scell { display: flex; flex-direction: column; gap: 3px; }
+
+.smain { width: 100%; padding: 7px 3px; border-radius: 8px; cursor: pointer; border: none; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: transform .1s; }
+.smain:active { transform: scale(.93); }
+.sid { font-size: 10px; font-weight: 700; font-family: monospace; line-height: 1.2; text-align: center; }
+.scheck { font-size: 9px; }
+
+.shave .smain { background: var(--green-dark); color: var(--green-light); }
+.smiss .smain { background: var(--bg4); color: var(--text4); border: 1px dashed var(--border2); }
+
+/* extra controls */
+.sextra { display: flex; align-items: center; justify-content: space-between; background: #0f2a1d; border-radius: 6px; padding: 2px 4px; }
+.xbtn { background: transparent; border: none; color: var(--green); font-size: 16px; font-weight: 700; padding: 0 4px; cursor: pointer; line-height: 1; }
+.xcnt { font-size: 10px; font-weight: 700; color: #4ade80; min-width: 22px; text-align: center; }
+
+/* ── EXPORT BAR ── */
+.export-bar { display: flex; align-items: center; justify-content: space-between; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 10px 13px; }
+.export-info { font-size: 13px; color: var(--text2); }
+.export-info strong { color: var(--text); }
+.btn-export { background: #1d4ed8; color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+
+.export-msg { background: var(--green-dark); color: var(--green-light); border-radius: 8px; padding: 9px 14px; font-size: 13px; text-align: center; }
+.extras-tip { background: var(--bg4); border-radius: 8px; padding: 10px 13px; font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+/* ── LIST CARDS ── */
+.list-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.list-hdr { display: flex; justify-content: space-between; align-items: center; padding: 9px 13px; font-size: 13px; font-weight: 700; background: var(--bg3); }
+.lbadge { border-radius: 99px; padding: 2px 9px; font-size: 10px; font-weight: 700; }
+.lbadge-r { background: var(--red-dark); color: var(--red-light); }
+.lbadge-b { background: var(--blue-dark); color: var(--blue-light); }
+.tag-list { display: flex; flex-wrap: wrap; gap: 5px; padding: 9px 11px; }
+.tag { border-radius: 6px; padding: 3px 7px; font-size: 10px; font-weight: 700; font-family: monospace; }
+.tag-r { background: var(--red-dark); color: var(--red-light); }
+.tag-b { background: var(--blue-dark); color: var(--blue-light); }
+
+.empty { text-align: center; color: var(--text3); padding: 40px; font-size: 14px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <div class="h-top">
+      <div>
+        <div class="logo">⚽ Álbum Copa 2026</div>
+        <div class="logo-sub">Panini FIFA World Cup 2026™</div>
+      </div>
+      <button class="btn-reset" onclick="resetAll()">Zerar</button>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+      <div class="prog-labels"><span class="prog-n" id="progN"></span><span id="progPct"></span></div>
+    </div>
+    <div class="pills">
+      <div class="pill pill-g" id="pillHave"></div>
+      <div class="pill pill-r" id="pillMiss"></div>
+      <div class="pill pill-b" id="pillExtra"></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('album',this)">📖 Álbum</button>
+      <button class="tab" onclick="switchTab('missing',this)">❌ Faltam</button>
+      <button class="tab" onclick="switchTab('extras',this)">🔁 Repetidas</button>
+    </div>
+  </div>
+  <div id="scroll"></div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+const ALBUM = [
+  { g:"FWC", gl:"Abertura", teams:[
+    { name:"FIFA World Cup 2026™", sfx:"FWC", flag:"🏆" }
+  ]},
+  { g:"A", gl:"Grupo A", teams:[
+    { name:"México",            sfx:"MEX", flag:"🇲🇽" },
+    { name:"África do Sul",     sfx:"RSA", flag:"🇿🇦" },
+    { name:"Coreia do Sul",     sfx:"KOR", flag:"🇰🇷" },
+    { name:"República Tcheca",  sfx:"CZE", flag:"🇨🇿" },
+  ]},
+  { g:"B", gl:"Grupo B", teams:[
+    { name:"Canadá",              sfx:"CAN", flag:"🇨🇦" },
+    { name:"Bósnia e Herzegovina",sfx:"BIH", flag:"🇧🇦" },
+    { name:"Catar",               sfx:"QAT", flag:"🇶🇦" },
+    { name:"Suíça",               sfx:"SUI", flag:"🇨🇭" },
+  ]},
+  { g:"C", gl:"Grupo C", teams:[
+    { name:"Brasil",   sfx:"BRA", flag:"🇧🇷" },
+    { name:"Marrocos", sfx:"MAR", flag:"🇲🇦" },
+    { name:"Haiti",    sfx:"HAI", flag:"🇭🇹" },
+    { name:"Escócia",  sfx:"SCO", flag:"🏴󠁧󠁢󠁳󠁣󠁴󠁿" },
+  ]},
+  { g:"D", gl:"Grupo D", teams:[
+    { name:"Estados Unidos", sfx:"USA", flag:"🇺🇸" },
+    { name:"Paraguai",       sfx:"PAR", flag:"🇵🇾" },
+    { name:"Austrália",      sfx:"AUS", flag:"🇦🇺" },
+    { name:"Turquia",        sfx:"TUR", flag:"🇹🇷" },
+  ]},
+  { g:"E", gl:"Grupo E", teams:[
+    { name:"Alemanha",        sfx:"GER", flag:"🇩🇪" },
+    { name:"Curaçao",         sfx:"CUW", flag:"🇨🇼" },
+    { name:"Costa do Marfim", sfx:"CIV", flag:"🇨🇮" },
+    { name:"Equador",         sfx:"ECU", flag:"🇪🇨" },
+  ]},
+  { g:"F", gl:"Grupo F", teams:[
+    { name:"Holanda",  sfx:"NED", flag:"🇳🇱" },
+    { name:"Japão",    sfx:"JPN", flag:"🇯🇵" },
+    { name:"Suécia",   sfx:"SWE", flag:"🇸🇪" },
+    { name:"Tunísia",  sfx:"TUN", flag:"🇹🇳" },
+  ]},
+  { g:"G", gl:"Grupo G", teams:[
+    { name:"Bélgica",       sfx:"BEL", flag:"🇧🇪" },
+    { name:"Egito",         sfx:"EGY", flag:"🇪🇬" },
+    { name:"Irã",           sfx:"IRN", flag:"🇮🇷" },
+    { name:"Nova Zelândia", sfx:"NZL", flag:"🇳🇿" },
+  ]},
+  { g:"H", gl:"Grupo H", teams:[
+    { name:"Espanha",        sfx:"ESP", flag:"🇪🇸" },
+    { name:"Cabo Verde",     sfx:"CPV", flag:"🇨🇻" },
+    { name:"Arábia Saudita", sfx:"KSA", flag:"🇸🇦" },
+    { name:"Uruguai",        sfx:"URU", flag:"🇺🇾" },
+  ]},
+  { g:"I", gl:"Grupo I", teams:[
+    { name:"França",   sfx:"FRA", flag:"🇫🇷" },
+    { name:"Senegal",  sfx:"SEN", flag:"🇸🇳" },
+    { name:"Iraque",   sfx:"IRQ", flag:"🇮🇶" },
+    { name:"Noruega",  sfx:"NOR", flag:"🇳🇴" },
+  ]},
+  { g:"J", gl:"Grupo J", teams:[
+    { name:"Argentina", sfx:"ARG", flag:"🇦🇷" },
+    { name:"Argélia",   sfx:"ALG", flag:"🇩🇿" },
+    { name:"Islândia",  sfx:"ISL", flag:"🇮🇸" },
+    { name:"Nigéria",   sfx:"NGA", flag:"🇳🇬" },
+  ]},
+  { g:"K", gl:"Grupo K", teams:[
+    { name:"Portugal",    sfx:"POR", flag:"🇵🇹" },
+    { name:"Angola",      sfx:"ANG", flag:"🇦🇴" },
+    { name:"Jordânia",    sfx:"JOR", flag:"🇯🇴" },
+    { name:"Uzbequistão", sfx:"UZB", flag:"🇺🇿" },
+  ]},
+  { g:"L", gl:"Grupo L", teams:[
+    { name:"Inglaterra", sfx:"ENG", flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    { name:"Colômbia",   sfx:"COL", flag:"🇨🇴" },
+    { name:"Itália",     sfx:"ITA", flag:"🇮🇹" },
+    { name:"Venezuela",  sfx:"VEN", flag:"🇻🇪" },
+  ]},
+];
+
+const N = 20;
+const KEY = "copa2026_pwa";
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let state = {};   // { "BRA1": {have, extra}, ... }
+let openGroups = {};
+let currentTab = "album";
+let filterMode = "all";
+let searchQ = "";
+let exportTimer = null;
+
+function buildInitial() {
+  const s = {};
+  ALBUM.forEach(({teams}) => teams.forEach(({sfx}) => {
+    for (let i = 1; i <= N; i++) s[`${sfx}${i}`] = {have:false,extra:0};
+  }));
+  return s;
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // merge with current keys to handle new stickers
+      const fresh = buildInitial();
+      Object.keys(fresh).forEach(k => { if (parsed[k]) fresh[k] = parsed[k]; });
+      return fresh;
+    }
+  } catch(e) {}
+  return buildInitial();
+}
+
+function saveState() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────
+function getStats() {
+  const keys = Object.keys(state);
+  const total = keys.length;
+  const have = keys.filter(k => state[k].have).length;
+  const extras = keys.reduce((a,k) => a + (state[k].extra||0), 0);
+  return { total, have, missing: total - have, extras };
+}
+
+// ── HEADER UPDATE ──────────────────────────────────────────────────────────
+function updateHeader() {
+  const {total,have,missing,extras} = getStats();
+  const pct = Math.round(have/total*100);
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progN').textContent = `${have}/${total}`;
+  document.getElementById('progPct').textContent = `${pct}% completo`;
+  document.getElementById('pillHave').textContent = `✅ ${have} tenho`;
+  document.getElementById('pillMiss').textContent = `❌ ${missing} faltam`;
+  document.getElementById('pillExtra').textContent = `🔁 ${extras} repetidas`;
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────────
+function render() {
+  updateHeader();
+  const scroll = document.getElementById('scroll');
+  if (currentTab === 'album') renderAlbum(scroll);
+  else if (currentTab === 'missing') renderMissing(scroll);
+  else renderExtras(scroll);
+}
+
+function renderAlbum(container) {
+  let html = `<div class="search-row">
+    <input class="search" id="searchInput" placeholder="Buscar (ex: BRA5, ARG, ENG…)" 
+      value="${searchQ}" oninput="onSearch(this.value)" autocapitalize="characters" autocorrect="off">
+    <div class="filter-row">
+      <button class="fbtn ${filterMode==='all'?'active':''}" onclick="setFilter('all')">Todas</button>
+      <button class="fbtn ${filterMode==='have'?'active':''}" onclick="setFilter('have')">✅ Tenho</button>
+      <button class="fbtn ${filterMode==='missing'?'active':''}" onclick="setFilter('missing')">❌ Faltam</button>
+    </div>
+  </div>`;
+
+  ALBUM.forEach(({g, gl, teams}) => {
+    const isOpen = openGroups[g] !== false;
+    const gTotal = teams.length * N;
+    const gHave = teams.reduce((a,{sfx}) => {
+      for(let i=1;i<=N;i++) if(state[`${sfx}${i}`]?.have) a++;
+      return a;
+    }, 0);
+
+    html += `<div class="group-card">
+      <div class="group-hdr" onclick="toggleGroup('${g}')">
+        <span class="group-hdr-title">${gl}</span>
+        <span class="group-hdr-count">${gHave}/${gTotal}</span>
+        <span class="chevron ${isOpen?'open':''}">▼</span>
+      </div>`;
+
+    if (isOpen) {
+      teams.forEach(({name, sfx, flag}) => {
+        const teamHave = Array.from({length:N},(_,i) => state[`${sfx}${i+1}`]?.have).filter(Boolean).length;
+        const allHave = teamHave === N;
+
+        // filter stickers
+        const visible = [];
+        for (let i=1; i<=N; i++) {
+          const id = `${sfx}${i}`;
+          const s = state[id] || {have:false,extra:0};
+          const fOk = filterMode==='all' || (filterMode==='have'&&s.have) || (filterMode==='missing'&&!s.have);
+          const sOk = !searchQ || id.includes(searchQ) || name.toUpperCase().includes(searchQ) || sfx.includes(searchQ);
+          if (fOk && sOk) visible.push({id,i,...s});
+        }
+        if (!visible.length) return;
+
+        html += `<div class="team">
+          <div class="team-hdr">
+            <span class="team-name">${flag} ${name}</span>
+            <span class="team-sfx">${sfx}</span>
+            <span class="team-cnt">${teamHave}/${N}</span>
+            <button class="btn-all" onclick="markAll('${sfx}',${!allHave})">${allHave?'Desmarcar':'Marcar tudo'}</button>
+          </div>
+          <div class="sgrid">`;
+
+        visible.forEach(({id,i,have,extra}) => {
+          html += `<div class="scell ${have?'shave':'smiss'}">
+            <button class="smain" onclick="toggleHave('${id}')">
+              <span class="sid">${id}</span>
+              ${have?'<span class="scheck">✓</span>':''}
+            </button>
+            ${have ? `<div class="sextra">
+              <button class="xbtn" onclick="changeExtra('${id}',-1)">−</button>
+              <span class="xcnt">${extra>0?'+'+extra:'—'}</span>
+              <button class="xbtn" onclick="changeExtra('${id}',1)">+</button>
+            </div>` : ''}
+          </div>`;
+        });
+
+        html += `</div></div>`;
+      });
+    }
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+  // restore search focus position
+}
+
+function renderMissing(container) {
+  const {missing} = getStats();
+  let html = `<div class="export-bar">
+    <div class="export-info"><strong>${missing}</strong> figurinhas faltando</div>
+    <button class="btn-export" onclick="exportList('missing')">📋 Copiar lista</button>
+  </div>
+  <div id="exportMsg" style="display:none" class="export-msg"></div>`;
+
+  let any = false;
+  ALBUM.forEach(({teams}) => {
+    teams.forEach(({name,sfx,flag}) => {
+      const items = [];
+      for(let i=1;i<=N;i++){const id=`${sfx}${i}`;if(!state[id]?.have)items.push(id);}
+      if(!items.length) return;
+      any = true;
+      html += `<div class="list-card">
+        <div class="list-hdr"><span>${flag} ${name}</span><span class="lbadge lbadge-r">${items.length} faltam</span></div>
+        <div class="tag-list">${items.map(id=>`<span class="tag tag-r">${id}</span>`).join('')}</div>
+      </div>`;
+    });
+  });
+
+  if (!any) html += `<div class="empty">🎉 Parabéns! Álbum completo!</div>`;
+  container.innerHTML = html;
+}
+
+function renderExtras(container) {
+  const {extras} = getStats();
+  let html = `<div class="export-bar">
+    <div class="export-info"><strong>${extras}</strong> figurinhas repetidas</div>
+    <button class="btn-export" onclick="exportList('extras')">📋 Copiar lista</button>
+  </div>
+  <div id="exportMsg" style="display:none" class="export-msg"></div>
+  <div class="extras-tip">💡 Marque repetidas na aba <strong>Álbum</strong> com os botões <strong>+/−</strong> após marcar como "tenho".</div>`;
+
+  let any = false;
+  ALBUM.forEach(({teams}) => {
+    teams.forEach(({name,sfx,flag}) => {
+      const items = [];
+      for(let i=1;i<=N;i++){const id=`${sfx}${i}`;const e=state[id]?.extra||0;if(e>0)items.push({id,e});}
+      if(!items.length) return;
+      any = true;
+      const tot = items.reduce((a,{e})=>a+e,0);
+      html += `<div class="list-card">
+        <div class="list-hdr"><span>${flag} ${name}</span><span class="lbadge lbadge-b">${tot} repetidas</span></div>
+        <div class="tag-list">${items.map(({id,e})=>`<span class="tag tag-b">${id} ×${e}</span>`).join('')}</div>
+      </div>`;
+    });
+  });
+
+  if (!any) html += `<div class="empty">Nenhuma repetida ainda.</div>`;
+  container.innerHTML = html;
+}
+
+// ── ACTIONS ────────────────────────────────────────────────────────────────
+function toggleHave(id) {
+  const cur = state[id];
+  state[id] = { have: !cur.have, extra: cur.have ? 0 : cur.extra };
+  saveState();
+  render();
+}
+
+function changeExtra(id, delta) {
+  const cur = state[id];
+  const next = Math.max(0, (cur.extra||0) + delta);
+  state[id] = { have: next > 0 ? true : cur.have, extra: next };
+  saveState();
+  render();
+}
+
+function markAll(sfx, have) {
+  for(let i=1;i<=N;i++){
+    const id=`${sfx}${i}`;
+    state[id] = { have, extra: have ? state[id].extra : 0 };
+  }
+  saveState();
+  render();
+}
+
+function toggleGroup(g) {
+  openGroups[g] = openGroups[g] === false ? true : false;
+  render();
+}
+
+function onSearch(val) {
+  searchQ = val.toUpperCase();
+  render();
+}
+
+function setFilter(mode) {
+  filterMode = mode;
+  render();
+}
+
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function resetAll() {
+  if (confirm('Zerar tudo? Essa ação não pode ser desfeita.')) {
+    state = buildInitial();
+    saveState();
+    render();
+  }
+}
+
+function exportList(type) {
+  const lines = [];
+  ALBUM.forEach(({gl,teams}) => {
+    teams.forEach(({name,sfx}) => {
+      const items = [];
+      for(let i=1;i<=N;i++){
+        const id=`${sfx}${i}`;
+        const s=state[id];
+        if(type==='missing'&&!s.have) items.push(id);
+        if(type==='extras'&&s.extra>0) items.push(`${id}×${s.extra}`);
+      }
+      if(items.length) lines.push(`[${name}] ${items.join(', ')}`);
+    });
+  });
+
+  const title = type==='missing' ? '❌ FIGURINHAS QUE FALTAM' : '🔁 FIGURINHAS REPETIDAS';
+  const text = `${title}\nÁlbum Panini Copa do Mundo 2026\n\n${lines.join('\n')}`;
+
+  const showMsg = (msg) => {
+    const el = document.getElementById('exportMsg');
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = 'block';
+    if (exportTimer) clearTimeout(exportTimer);
+    exportTimer = setTimeout(() => { el.style.display='none'; }, 3000);
+  };
+
+  if (!lines.length) {
+    showMsg(type==='missing' ? '🎉 Nenhuma figurinha faltando!' : 'Nenhuma repetida registrada.');
+    return;
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(() => showMsg('✅ Copiado para a área de transferência!'))
+      .catch(() => fallbackExport(text));
+  } else {
+    fallbackExport(text);
+  }
+}
+
+function fallbackExport(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  const el = document.getElementById('exportMsg');
+  if (el) { el.textContent='✅ Copiado!'; el.style.display='block'; }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+state = loadState();
+// default: all groups open
+ALBUM.forEach(({g}) => { openGroups[g] = true; });
+render();
+
+// prevent double-tap zoom on iOS
+document.addEventListener('touchend', e => {
+  if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+    e.preventDefault();
+  }
+}, { passive: false });
+</script>
+</body>
+</html>
