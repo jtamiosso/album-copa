@@ -85,21 +85,22 @@ export default async function handler(req, res) {
 
   const prompts = {
     pack: `Você está analisando figurinhas SOLTAS do álbum Panini FIFA World Cup 2026.
-Olhe esta foto e liste APENAS os nomes de jogadores que aparecem em figurinhas completas — com FOTO DO JOGADOR visível.
+Olhe esta foto e liste APENAS os nomes de jogadores que aparecem em figurinhas completas com FOTO DO JOGADOR visível.
 Os nomes aparecem em CAIXA ALTA na parte inferior de cada figurinha, ABAIXO da foto do jogador.
-IMPORTANTE: Ignore espaços vazios, ignore números impressos no álbum sem figurinha colada. Só liste se houver uma foto de rosto de jogador claramente visível na figurinha.
-Retorne APENAS um array JSON com os nomes, sem explicação. Exemplo: ["GABRIEL MARTINELLI", "VINICIUS JUNIOR", "RODRYGO"]
+IMPORTANTE: Ignore espaços vazios e números impressos no álbum sem figurinha colada. Só liste se houver foto de rosto claramente visível.
+Retorne APENAS um array JSON com os nomes. Exemplo: ["GABRIEL MARTINELLI", "VINICIUS JUNIOR", "RODRYGO"]
 Se não identificar nenhum jogador com foto, retorne [].`,
     album: `Você está analisando uma página do álbum Panini FIFA World Cup 2026.
 Identifique APENAS os nomes de jogadores em figurinhas que estão COLADAS — ou seja, que têm uma FOTO DO JOGADOR visível.
 Os nomes aparecem em CAIXA ALTA na parte inferior de cada figurinha colada, ABAIXO da foto do rosto do jogador.
-IMPORTANTE: 
-- Ignore completamente os espaços vazios (onde não há figurinha colada)
+IMPORTANTE:
+- Ignore completamente os espaços vazios onde não há figurinha colada
 - Ignore números e textos impressos no fundo do álbum sem figurinha
-- Só considere figurinhas que tenham foto de rosto de jogador claramente colada
-- Uma figurinha colada tem: foto do jogador + nome em caixa alta + código (ex: MEX2)
-Retorne APENAS um array JSON com os nomes dos jogadores com figurinha colada. Exemplo: ["CASEMIRO", "ALISSON", "MARQUINHOS"]
-Se não identificar nenhuma figurinha colada com foto, retorne [].`,
+- INCLUA figurinhas brilhantes/douradas/holográficas (FOIL) — escudos de times, emblemas — mesmo que não tenham nome de jogador, leia o código impresso nelas como "ESCUDO [CÓDIGO]" ex: "ESCUDO BRA", "ESCUDO ESP"
+- Uma figurinha colada tem: foto do jogador (ou escudo/emblema brilhante) + nome ou código
+- Só considere figurinhas com imagem claramente visível
+Retorne APENAS um array JSON com os nomes/códigos. Exemplo: ["ESCUDO BRA", "CASEMIRO", "ALISSON", "ESCUDO ESP", "UNAI SIMON"]
+Se não identificar nenhuma figurinha colada, retorne [].`,
   };
 
   try {
