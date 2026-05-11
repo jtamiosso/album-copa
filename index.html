@@ -35,20 +35,35 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; cursor: pointer; }
-html { height: -webkit-fill-available; }
-body { height: 100%; height: -webkit-fill-available; overflow: hidden; background: var(--bg); color: var(--text); font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif; cursor: default; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif; cursor: default; }
 input, textarea { cursor: text; }
 
 /* ── LAYOUT ── */
-#app { display: flex; flex-direction: column; height: 100%; height: -webkit-fill-available; position: fixed; top: 0; left: 0; right: 0; bottom: 0; }
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* iOS Safari fix */
+@supports (-webkit-touch-callout: none) {
+  #app { height: -webkit-fill-available; }
+}
 
 /* ── HEADER ── */
 #header {
   flex-shrink: 0;
   background: linear-gradient(160deg, #0f2a4a 0%, #0c1220 100%);
   border-bottom: 1.5px solid var(--green);
-  padding: calc(var(--safe-top) + 14px) 16px 0;
+  padding: 14px 16px 0;
   box-shadow: 0 4px 24px rgba(0,0,0,.5);
+}
+
+/* No iPhone com notch, adiciona espaço extra no topo */
+@supports (-webkit-touch-callout: none) {
+  #header { padding-top: max(14px, env(safe-area-inset-top)); }
 }
 .h-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
 .logo { font-size: 19px; font-weight: 800; color: var(--green); letter-spacing: -0.5px; }
@@ -77,11 +92,13 @@ input, textarea { cursor: text; }
 /* ── SCROLL AREA ── */
 #scroll {
   flex: 1;
-  overflow-y: scroll;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  padding: 12px 14px calc(var(--safe-bottom) + 16px);
-  display: flex; flex-direction: column; gap: 10px;
+  padding: 12px 14px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   min-height: 0;
 }
 
