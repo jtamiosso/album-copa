@@ -84,16 +84,22 @@ export default async function handler(req, res) {
   if (!image) return res.status(400).json({ error: 'No image provided' });
 
   const prompts = {
-    pack: `Você está analisando figurinhas do álbum Panini FIFA World Cup 2026.
-Olhe esta foto e liste TODOS os nomes de jogadores visíveis nas figurinhas.
-Os nomes aparecem em CAIXA ALTA na parte inferior de cada figurinha.
+    pack: `Você está analisando figurinhas SOLTAS do álbum Panini FIFA World Cup 2026.
+Olhe esta foto e liste APENAS os nomes de jogadores que aparecem em figurinhas completas — com FOTO DO JOGADOR visível.
+Os nomes aparecem em CAIXA ALTA na parte inferior de cada figurinha, ABAIXO da foto do jogador.
+IMPORTANTE: Ignore espaços vazios, ignore números impressos no álbum sem figurinha colada. Só liste se houver uma foto de rosto de jogador claramente visível na figurinha.
 Retorne APENAS um array JSON com os nomes, sem explicação. Exemplo: ["GABRIEL MARTINELLI", "VINICIUS JUNIOR", "RODRYGO"]
-Se não identificar nenhum jogador, retorne [].`,
-    album: `Você está analisando uma página do álbum Panini FIFA World Cup 2026 com figurinhas já coladas.
-Identifique todos os nomes de jogadores visíveis nas figurinhas coladas.
-Os nomes aparecem em CAIXA ALTA na parte inferior de cada figurinha.
-Retorne APENAS um array JSON com os nomes. Exemplo: ["CASEMIRO", "ALISSON", "MARQUINHOS"]
-Se não identificar nenhum, retorne [].`,
+Se não identificar nenhum jogador com foto, retorne [].`,
+    album: `Você está analisando uma página do álbum Panini FIFA World Cup 2026.
+Identifique APENAS os nomes de jogadores em figurinhas que estão COLADAS — ou seja, que têm uma FOTO DO JOGADOR visível.
+Os nomes aparecem em CAIXA ALTA na parte inferior de cada figurinha colada, ABAIXO da foto do rosto do jogador.
+IMPORTANTE: 
+- Ignore completamente os espaços vazios (onde não há figurinha colada)
+- Ignore números e textos impressos no fundo do álbum sem figurinha
+- Só considere figurinhas que tenham foto de rosto de jogador claramente colada
+- Uma figurinha colada tem: foto do jogador + nome em caixa alta + código (ex: MEX2)
+Retorne APENAS um array JSON com os nomes dos jogadores com figurinha colada. Exemplo: ["CASEMIRO", "ALISSON", "MARQUINHOS"]
+Se não identificar nenhuma figurinha colada com foto, retorne [].`,
   };
 
   try {
@@ -141,4 +147,3 @@ Se não identificar nenhum, retorne [].`,
     return res.status(500).json({ error: err.message });
   }
 }
-
