@@ -98,7 +98,7 @@ input, textarea { cursor: text; }
 .group-hdr { display: flex; align-items: center; gap: 8px; padding: 11px 13px; background: var(--bg3); cursor: pointer; user-select: none; width: 100%; border: none; text-align: left; color: var(--text); }
 .group-hdr-title { font-weight: 800; font-size: 12px; flex: 1; color: var(--blue-light); letter-spacing: .3px; }
 .group-hdr-count { background: var(--blue-dark); color: var(--blue); border-radius: 99px; padding: 2px 9px; font-size: 10px; font-weight: 700; }
-.chevron { font-size: 9px; color: var(--text4); transition: transform .2s; }
+.chevron { font-size: 9px; color: var(--text4); transition: transform .2s; display: inline-block; }
 .chevron.open { transform: rotate(180deg); }
 
 /* ── TEAM ── */
@@ -336,7 +336,7 @@ function renderAlbum(container) {
   </div>`;
 
   ALBUM.forEach(({g, gl, teams}) => {
-    const isOpen = openGroups[g] !== false;
+    const isOpen = openGroups[g] === true;
     const gTotal = teams.length * N;
     const gHave = teams.reduce((a,{sfx}) => {
       for(let i=1;i<=N;i++) if(state[`${sfx}${i}`]?.have) a++;
@@ -479,7 +479,7 @@ function markAll(sfx, have) {
 }
 
 function toggleGroup(g) {
-  openGroups[g] = openGroups[g] === false ? true : false;
+  openGroups[g] = !openGroups[g];
   render();
 }
 
@@ -563,8 +563,8 @@ function fallbackExport(text) {
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 state = loadState();
-// default: all groups open
-ALBUM.forEach(({g}) => { openGroups[g] = true; });
+// grupos começam fechados - usuário abre o que quiser
+ALBUM.forEach(({g}) => { openGroups[g] = false; });
 render();
 
 // sem listener de touchend - iOS Safari dispara click normalmente em buttons
