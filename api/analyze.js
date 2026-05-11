@@ -64,9 +64,23 @@ Object.entries(PLAYERS).forEach(([id, name]) => {
 function findSticker(playerName) {
   if (!playerName) return null;
   const normalized = playerName.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
-  // busca exata
+  
+  // Detectar "FOTO DO TIME" ou "TEAM PHOTO" + código do time
+  const fotoMatch = normalized.match(/(?:FOTO|TEAM|PHOTO|WE ARE|SQUAD).*?([A-Z]{2,3})$/) ||
+                    normalized.match(/^([A-Z]{2,3})\s*(?:13|FOTO|TEAM|PHOTO)/);
+  if (fotoMatch) {
+    const sfx = fotoMatch[1];
+    if (PLAYERS[sfx + '13']) return sfx + '13';
+  }
+
+  // Detectar "ESCUDO XXX" → posição 1
+  const escudoMatch = normalized.match(/^ESCUDO\s+([A-Z]{2,3})$/);
+  if (escudoMatch && PLAYERS[escudoMatch[1] + '1']) return escudoMatch[1] + '1';
+
+  // Busca exata
   if (NAME_TO_ID[normalized]) return NAME_TO_ID[normalized];
-  // busca parcial — sobrenome
+  
+  // Busca parcial — sobrenome
   for (const [key, id] of Object.entries(NAME_TO_ID)) {
     if (key.includes(normalized) || normalized.includes(key.split(' ').pop())) return id;
   }
@@ -91,16 +105,14 @@ IMPORTANTE: Ignore espaços vazios e números impressos no álbum sem figurinha 
 Retorne APENAS um array JSON com os nomes. Exemplo: ["GABRIEL MARTINELLI", "VINICIUS JUNIOR", "RODRYGO"]
 Se não identificar nenhum jogador com foto, retorne [].`,
     album: `Você está analisando uma página do álbum Panini FIFA World Cup 2026.
-Identifique APENAS os nomes de jogadores em figurinhas que estão COLADAS — ou seja, que têm uma FOTO DO JOGADOR visível.
-Os nomes aparecem em CAIXA ALTA na parte inferior de cada figurinha colada, ABAIXO da foto do rosto do jogador.
-IMPORTANTE:
-- Ignore completamente os espaços vazios onde não há figurinha colada
-- Ignore números e textos impressos no fundo do álbum sem figurinha
-- INCLUA figurinhas brilhantes/douradas/holográficas (FOIL) — escudos de times, emblemas — mesmo que não tenham nome de jogador, leia o código impresso nelas como "ESCUDO [CÓDIGO]" ex: "ESCUDO BRA", "ESCUDO ESP"
-- Uma figurinha colada tem: foto do jogador (ou escudo/emblema brilhante) + nome ou código
-- Só considere figurinhas com imagem claramente visível
-Retorne APENAS um array JSON com os nomes/códigos. Exemplo: ["ESCUDO BRA", "CASEMIRO", "ALISSON", "ESCUDO ESP", "UNAI SIMON"]
-Se não identificar nenhuma figurinha colada, retorne [].`,
+Identifique APENAS as figurinhas que estão COLADAS — com imagem visível.
+TIPOS DE FIGURINHAS:
+1. Jogador: tem foto de rosto + nome em CAIXA ALTA + código (ex: BIH3 AMER DEDIC) → retorne o nome do jogador
+2. Foto do Time: tem foto coletiva do elenco + texto descritivo + código XX13 → retorne "FOTO TIME XX" (ex: "FOTO TIME BIH", "FOTO TIME MEX")
+3. Escudo FOIL: figurinha brilhante/holográfica com escudo do clube → retorne "ESCUDO XX" (ex: "ESCUDO BRA")
+IGNORE: espaços vazios, números impressos no fundo sem figurinha, textos do álbum.
+Retorne APENAS array JSON. Exemplo: ["AMER DEDIC", "FOTO TIME BIH", "ESCUDO BIH", "NIKOLA VASILJ"]
+Se nada identificado, retorne [].`,
   };
 
   try {
