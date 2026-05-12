@@ -65,17 +65,25 @@ function findSticker(playerName) {
   if (!playerName) return null;
   const normalized = playerName.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
   
-  // Detectar "FOTO DO TIME" ou "TEAM PHOTO" + código do time
-  const fotoMatch = normalized.match(/(?:FOTO|TEAM|PHOTO|WE ARE|SQUAD).*?([A-Z]{2,3})$/) ||
+  // Detectar "FOTO TIME XXX" ou "FOTO DO TIME XXX" ou "TEAM PHOTO XXX"
+  const fotoMatch = normalized.match(/(?:FOTO\s*(?:DO\s*)?TIME|TEAM\s*PHOTO|SQUAD)\s+([A-Z]{2,3})$/) ||
                     normalized.match(/^([A-Z]{2,3})\s*(?:13|FOTO|TEAM|PHOTO)/);
   if (fotoMatch) {
     const sfx = fotoMatch[1];
     if (PLAYERS[sfx + '13']) return sfx + '13';
   }
 
-  // Detectar "ESCUDO XXX" → posição 1
-  const escudoMatch = normalized.match(/^ESCUDO\s+([A-Z]{2,3})$/);
-  if (escudoMatch && PLAYERS[escudoMatch[1] + '1']) return escudoMatch[1] + '1';
+  // Detectar "ESCUDO XXX" ou "FOIL XXX" ou "BRILHANTE XXX" → posição 1
+  const escudoMatch = normalized.match(/^(?:ESCUDO|FOIL|BRILHANTE|SHIELD|CREST)\s+([A-Z]{2,3})$/) ||
+                      normalized.match(/^([A-Z]{2,3})\s+(?:ESCUDO|FOIL|BRILHANTE)$/);
+  if (escudoMatch) {
+    const sfx = escudoMatch[1];
+    if (PLAYERS[sfx + '1']) return sfx + '1';
+  }
+
+  // Detectar apenas sigla de 2-3 letras como escudo (ex: "BRA" → BRA1)
+  const soloSfx = normalized.match(/^([A-Z]{2,3})$/);
+  if (soloSfx && PLAYERS[soloSfx[1] + '1']) return soloSfx[1] + '1';
 
   // Busca exata
   if (NAME_TO_ID[normalized]) return NAME_TO_ID[normalized];
@@ -98,12 +106,20 @@ export default async function handler(req, res) {
   if (!image) return res.status(400).json({ error: 'No image provided' });
 
   const prompts = {
-    pack: `Você está analisando figurinhas SOLTAS do álbum Panini FIFA World Cup 2026.
-Olhe esta foto e liste APENAS os nomes de jogadores que aparecem em figurinhas completas com FOTO DO JOGADOR visível.
-Os nomes aparecem em CAIXA ALTA na parte inferior de cada figurinha, ABAIXO da foto do jogador.
-IMPORTANTE: Ignore espaços vazios e números impressos no álbum sem figurinha colada. Só liste se houver foto de rosto claramente visível.
-Retorne APENAS um array JSON com os nomes. Exemplo: ["GABRIEL MARTINELLI", "VINICIUS JUNIOR", "RODRYGO"]
-Se não identificar nenhum jogador com foto, retorne [].`,
+    pack: `Você está analisando figurinhas SOLTAS do álbum Panini FIFA World Cup 2026 tiradas de um PACOTINHO.
+Identifique TODOS os tipos de figurinha visíveis:
+
+1. JOGADOR COMUM: tem foto de rosto + nome em CAIXA ALTA + código (ex: BRA14 VINICIUS JÚNIOR) → retorne o nome do jogador. Ex: "VINICIUS JUNIOR"
+
+2. ESCUDO BRILHANTE / FOIL (posição 1 de cada seleção): figurinha com acabamento holográfico/brilhante/metálico mostrando o escudo/brasão do país, geralmente com o nome do país ou sigla visível. Retorne "ESCUDO XXX" com a sigla do país. Ex: "ESCUDO BRA", "ESCUDO ARG", "ESCUDO MEX"
+
+3. FOTO DO TIME (posição 13): figurinha com foto coletiva do elenco inteiro, geralmente com muitos jogadores juntos e o nome do país visível. Retorne "FOTO TIME XXX" com a sigla. Ex: "FOTO TIME BRA", "FOTO TIME ARG"
+
+4. FIGURINHAS FWC (abertura): figurinhas temáticas da Copa (emblema, mascote, bola, países-sede, edições históricas). Retorne o texto descritivo visível.
+
+IMPORTANTE: Mesmo que seja brilhante/holográfica, identifique. Mesmo que seja foto coletiva, identifique.
+Retorne APENAS um array JSON. Exemplo: ["ESCUDO BRA", "VINICIUS JUNIOR", "FOTO TIME ARG", "RODRYGO"]
+Se não identificar nada, retorne [].`,
     album: `Você está analisando uma página do álbum Panini FIFA World Cup 2026.
 Identifique APENAS as figurinhas que estão COLADAS — com imagem visível.
 TIPOS DE FIGURINHAS:
@@ -124,7 +140,7 @@ Se nada identificado, retorne [].`,
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-5',
+        model: 'claude-sonnet-4-5-20251001',
         max_tokens: 1024,
         messages: [{
           role: 'user',
